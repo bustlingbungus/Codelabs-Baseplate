@@ -1,3 +1,5 @@
 #ignore node stuff
 node_modules/
 package-lock.json
+#ignore claat stuff
+temp/

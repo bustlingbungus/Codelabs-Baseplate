@@ -9,7 +9,7 @@ feedback link: https://github.com/bustlingbungus/Codelabs-Baseplate/tree/Physics
 
 # 2D Physics Simulation
 
-## I'm trying to change some things
+## Ok so here's an actual title?
 
 Duration: 0:05:00
 

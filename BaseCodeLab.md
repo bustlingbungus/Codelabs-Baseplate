@@ -1,11 +1,11 @@
-author: Jonathan Wong
+author: Caden Spokas
 summary:
 id: BaseCodeLab
 tags:
 categories:
 environments: Web
 status: Published
-feedback link: https://github.com/SolaceDev/solace-dev-codelabs/blob/master/markdown/BaseCodeLab
+feedback link: https://github.com/bustlingbungus/Codelabs-Baseplate/tree/main
 
 # Title of codelab goes here
 

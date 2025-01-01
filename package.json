@@ -1,0 +1,20 @@
+{
+  "name": "codelab-bootstrap",
+  "version": "1.0.0",
+  "description": "use nodemon to watch changes on md file, rebuild codelab on saves",
+  "main": "index.js",
+  "scripts": {
+  "watch": "nodemon --watch BaseCodeLab.md --exec \"claat export -o temp/ BaseCodeLab.md && npx kill-port 9090 && cd temp/BaseCodeLab && claat serve\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SolaceDev/solace-dev-codelabs/tree/master/markdown/BaseCodeLab"
+  },
+  "keywords": [
+    "codelab"
+  ],
+  "dependencies": {
+    "kill-port": "^1.6.1",
+    "nodemon": "^2.0.3"
+  }
+}

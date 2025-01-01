@@ -5,7 +5,7 @@ tags:
 categories:
 environments: Web
 status: Published
-feedback link: https://github.com/SolaceDev/solace-dev-codelabs/blob/master/markdown/BaseCodeLab
+feedback link: https://github.com/bustlingbungus/Codelabs-Baseplate/tree/Physics_2D
 
 # 2D Physics Simulation
 

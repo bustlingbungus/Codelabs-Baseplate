@@ -1,7 +1,5 @@
-Difference between thsi file and the solace-dev-codelab is in package.JSON
+# Physics 2D CodeLab
 
-`"scripts": {
-  "watch": "nodemon --watch BaseCodeLab.md --exec \"claat export -o temp/ BaseCodeLab.md && npx kill-port 9090 && cd temp/BaseCodeLab && claat serve\""
-  }`
+Here is the CodeLab for the [USF GameDev Club](https://www.instagram.com/usf_gamedev/) 2D Physics workshop.
 
-Why difference, because Windows, and he used Mac which can run Liniux scripts, but Windows is special
+[Here](https://github.com/bustlingbungus/Physics2D) is the repo for the actual source code.

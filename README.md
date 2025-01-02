@@ -1,6 +1,6 @@
 # CodeLab Baseplate
 
-This is a copy of [Johnathan Wong's](https://github.com/JwongtheCodyBoy) CodeLab baseplate, but for some reason I was having trouble creating a branch when using a fork of [this](https://github.com/JwongtheCodyBoy/Codelabs-Baseplate) repo, so I just made my own repository.
+This is a copy of [Johnathan Wong's](https://github.com/JwongtheCodyBoy) CodeLab baseplate, but for some reason git was throwing weird error when I tried creating a branch for my fork of [this](https://github.com/JwongtheCodyBoy/Codelabs-Baseplate) repo, so I just made my own repository.
 
 Create a fork of this (or the aforementioned repo) to access the CodeLab baseplate.
 

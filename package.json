@@ -4,11 +4,11 @@
   "description": "use nodemon to watch changes on md file, rebuild codelab on saves",
   "main": "index.js",
   "scripts": {
-  "watch": "nodemon --watch Minesweeper.md --exec \"claat export -o temp/ Minesweeper.md && npx kill-port 9090 && cd temp/MinesweeperCodeLab && claat serve\""
+  "watch": "nodemon --watch Minesweeper.md --exec \"claat export -o temp/ Minesweeper.md && npx kill-port 9090 && cd temp/Minesweeper && claat serve\""
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/bustlingbungus/Codelabs-Baseplate/tree/Minesweeper"
+    "url": "https://github.com/bustlingbungus/Codelabs-Baseplate/tree/Physics_2D"
   },
   "keywords": [
     "codelab"

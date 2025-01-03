@@ -3,3 +3,6 @@ node_modules/
 package-lock.json
 #ignore claat stuff
 temp/
+
+# python stuff
+followAlong/__pycache__/

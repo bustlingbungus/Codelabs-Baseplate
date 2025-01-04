@@ -1368,6 +1368,9 @@ def rightClick(x, y):
 
 # Gets user input 
 def getInput(event):
+
+    global game_over        # <----- ADD THIS LINE HERE
+
     # when left/right clicking, get mouse position, and call the appropriate function
     if event.type == pygame.MOUSEBUTTONDOWN:
         # get mouse positions and which buttons are active

@@ -3,6 +3,8 @@ import pygame, sys
 from Cell import *
 from Functions import *
 
+createGrid()
+
 quit_app = False
 
 # Main window loop
@@ -12,9 +14,13 @@ while not quit_app:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             quit_app = True
+        else:
+            getInput(event)
     
     # Clear window
     WINDOW.fill("black")
+    
+    render()
     
     # update the display
     pygame.display.update()

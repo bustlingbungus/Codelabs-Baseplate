@@ -3,3 +3,7 @@ node_modules/
 package-lock.json
 #ignore claat stuff
 temp/
+#vscode stuff
+.vscode/settings.json
+.vscode/launch.json
+.vscode/c_cpp_properties.json

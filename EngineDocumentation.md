@@ -323,3 +323,11 @@ Returns the position of the mouse in game. Does this by finding the mouse's posi
 <b>Other Notes:</b>
 
 * If `cam` is `nullptr`, and no camera exists in the scene, the mouse's position on the window is returned.
+
+### Time Tracking
+
+This is the system that calculate's the game's framerate, and delta time (the time elapsed between frames). All time tracking functions are stored in the global `gTime` object. To access these functions, call `gTime.deltaTime()`, for instance. 
+
+`gTime.findDeltaTime()` is called in the main window loop. To ensure accurate tracking, this should not be moved, or called elsewhere.
+
+Time tracking is based off of differences in `clock_t` objects, from the standard `ctime` header. 

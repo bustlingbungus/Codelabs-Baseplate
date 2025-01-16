@@ -17,6 +17,9 @@ This is documentation for the functions and methods found in Bustling Bungus' SD
 
 1. Table of Contents (this page)
 2. LWindow
+3. LTexture
+4. LAudio
+5. LFont
 
 ## <b>LWindow</b>
 
@@ -379,7 +382,158 @@ Sets the texture blend mode.
 
 ## LAudio
 
-Class for loading and playing audio. Will play audio into a number of different channels. Channel zero can only be accessed manually, not by the automatic channel picking system. This is intended to have a "reserved" channel for music, that can't be interrupted by automatic channel picking.
+Class for loading and playing audio. Will play audio into a number of different channels. Channel zero can only be accessed manually, not by the automatic channel queue system. This is intended to have a "reserved" channel for music, that can't be interrupted by automatic channel queue.
 
 There are 8 total channels to choose from. Without the reseved channel 0, this makes 7 free audio channels. If you play an audio while all 7 of these channels are playing audio, one of these channels will be interrupted to play the new audio. 
 
+> aside negative
+> WARNING: Audio may only be loaded from a `.wav` file.
+
+### constructor
+
+Creates a new LAudio object. Does not load any audio.
+
+<b>Other Notes:</b>
+
+* Calls `MixOpenAudio(22050, AUDIO_S16SYS, 2, 640)`.
+
+### deconstructor
+
+Deallocates memory by calling `free`.
+
+### free
+
+Deallocates memory used by the stored audio chunk.
+
+> aside negative
+> WARNING: after calling `free`, LAudio object will not be usable until a new audio file is loaded. 
+
+<b>Returns:</b> void
+
+### loadFromFile
+
+Loads the specified audio file as a `Mix_Chunk`. Calculates and stores the duration of the loaded audio in seconds. Returns true/false for the success of the operation.
+
+<b>Returns:</b> bool
+
+<b>Arguments:</b>
+
+* `path : std::string` - The relative directory + filename of the audio file to load.
+
+<b>Other Notes:</b>
+
+* Only `.wav` files may be loaded.
+
+### play
+
+Begins playing the stored audio on the next audio channel in the queue. 
+
+<b>Returns:</b> void
+
+<b>Arguments:</b>
+
+* `Channel : int` - The channel to play audio on. Leave as -1 to use the next queued channel.
+* `loops : int` - The number of times to loop the audio. Leave as `0` for audio to play once, set to `1` to play twice (one loop), etc. Set to `-1` to loop the audio indefinitely.
+
+<b>Other Notes:</b>
+
+* Channel zero can only be accessed manually, not by the automatic channel picking system. This is intended to have a "reserved" channel for music, that can't be interrupted by automatic channel picking.
+    * There are 8 total channels to choose from. Without the reseved channel 0, this makes 7 free audio channels. If you play an audio while all 7 of these channels are playing audio, one of these channels will be interrupted to play the new audio. 
+* If you call this function repeatedly, the audio will start playing repeatedly. i.e., calling `play` twice on subsequent frames will play the audio twice on two different audio channels.
+
+### stop
+
+Stop playing the audio by halting the channel the audio was playing on.
+
+<b>Returns:</b> void
+
+<b>Other Notes:</b>
+
+* Does not save the position within the audio that was reached. Calling `play` after calling `stop` will play the audio from the beginning.
+
+### duration
+
+Returns the duration of the loaded audio, in seconds.
+
+<b>Returns:</b> float
+
+## LFont
+
+A container for managing a `TTF_Font`. Contains a `TTF_Font` pointer for the font itself, an integer point size, for handling font size, and a colour.
+
+> aside negative
+> WARNING: Only use .ttf file format to load fonts! 
+
+### constructor
+
+Initialises variables by loading the font from the provided file.
+
+<b>Arguments:</b>
+
+* `size : int` - The font's point size
+* `filename : std::string` - The relative directory and filename of the font to load.
+* `colour : SDL_Colour` - The text colour.
+
+### deconstructor
+
+Deallocates resources by calling `free`
+
+### free
+
+Deallocates resources by destroying the stored font object. Resets all stored variables.
+
+<b>Arguments:</b>
+
+* `clearFilename : bool` - Determine if the stored font filename should be cleared. `true` by default.
+
+### load
+
+Loads a new font from the given file. Returns true/false for the success of the operation.
+
+<b>Returns:</b> bool
+
+<b>Arguments:</b>
+
+* `newFilename : std::string` - The relative directory and filename of the font to load.
+* `ptSize : int` - The font's point size. Creates 12pt font by default.
+
+<b>Other Notes:</b>
+
+* Only `.ttf` files may be loaded.
+* Does nothing and returns `true` when trying to reload an already loaded font with the same size.
+
+### setPtSize
+
+Set the font's point size by reloading the font from file with the desired size. Returns true/false for the success of the operation.
+
+<b>Returns:</b> bool
+
+<b>Arguments:</b>
+
+* `ptSize : int` - The font's point size.
+
+### setColour
+
+Assign font colour.
+
+<b>Arguments:</b>
+
+* `col : SDL_Colour` - The desired colour.
+
+### get
+
+Returns a raw pointer to the `TTF_Font` object.
+
+<b>Returns:</b> TTF_Font*
+
+### getPtSize
+
+Returns the current point size of the font.
+
+<b>Returns:</b> int
+
+### getColour
+
+Returns the font's colour
+
+<b>Returns:</b> SDL_Colour

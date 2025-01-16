@@ -238,71 +238,88 @@ auto obj = Instantiate<MyObject>(
 );
 ```
 
-## Documentation: SDL
+## SDL Documentation + gWindow
 
-This section will outline the use and functionality of the SDL baseplate classes and their functions.
+[Here](https://bustlingbungus.github.io/SDLBoilerplateDocumentation/) you can find full documentation for the SDL methods used in this boilerplate.
 
-### <b>LWindow</b>
+### gWindow
 
-> aside negative
-> Before discussing the LWindow class, it is important to note this engine makes use of one globally accessible LWindow pointer, `gWindow`. gWindow should be used for all SDL functions that involve a window, and you should not define any LWindow objects other than gWindow.
+This is the global window object used for all window related functions in the engine. Do not create any additional LWindow objects. When creating LTextures (or any function involving a window), use gWindow. gWindow's default window dimensions are 1280x720 pixels, and is in windowed mode by default.
 
-The LWindow stores an SDL_Window and SDL_Renderer. The window is the main window opened and used by the game, and the renderer is the global renderer used for most rendering functions in this API. The LWindow also performs all the neccesary initilisations for SDL in its constructor, which allows functionality of all SDL processes. This initialisation is why it's important to not create any addional LWindow objects.
+### SetWindowTitle
 
-The LWindow also contains a `gFont` member as a public member. This is a default font used when no font is specified for text rendering functions. This default font is white, 18 point Arial. 
-
-### constructor
-
-Initalises window variables and SDL.
-
-<b>Arguments:</b>
-
-* `width : int` - Window width (in pixels)
-* `height : int` - Window height (in pixels)
-* `name : std::string` - The Window's title
-
-<b>Other Notes:</b>
-
-* SDL is initalised with the flags `SDL_INIT_VIDEO`, `SDL_INIT_AUDIO`
-* SDL_mixer is initialised with the flags `MIX_INIT_MP3`
-* Linear texture filtering is enabled
-* The renderer is created with index -1, and flags `SDL_RENDERER_ACCELERATED`
-* Renderer draw colour is initialised to RGBA: 0,0,0,0
-* SDL_image is initialised with flags `IMG_INIT_PNG`
-* The default Arial font is loaded from "../../assets/DefaultFont.ttf", this file cannot be moved, deleted, renamed, or otherwise missing.
-
-### deconstructor
-
-Deallocates all resources by destroying renderer and window, freeing gFont, and quitting all SDL subsystems.
-
-> aside negative
-> WARNING: SDL will no longer be usable if you somehow create code <i>after</i> this deconstructor is called
-
-### handleEvent
-
-Performs updates and tracks changes in focus based on SDL window events. Changes window scale if the window is resized.
-
-Complexity: O(1) time, O(1) memory
+This function modifies gWindow's title to any string.
 
 <b>Returns:</b> void
 
 <b>Arguments:</b>
 
-* `e : SDL_Event&` - Object containing event information.
+* `title : std::string` - The new title for the window.
 
-<b>Other Notes:</b>
+## Input Tracking
 
-* This function is currently called in the event loop of the main window loop, this should not be changed. 
+Input from keyboard keys and mouse buttons are tracked in three hash sets, "down", "held", and "up". On the frame that an input is pressed, it is put into the "down" and "held" sets. On the next frame it is removed from the "down" set, but not neccesarily from "held". On the frame an input is released, it is released, it is added to the "up" set, and removed from the "held" set. It is removed from "up" on the next frame. In other words "up" and "down" sets are cleared once per frame.
 
-### setName
+Mouse position is stored in a `Vector2Int` window position coordinate.
 
-Changes the window's title.
+The global input tracker by default collects input in the event loop of the main window frame. For accurate input reading, this should not be changed.
 
-<b>Returns:</b> void
+> aside positive
+> * "Down" refers to inputs that were pressed on the current frame.
+> * "Held" refers to any input that is currently held down.
+> * "Up" refers to inputs that were released on the current frame.
+
+> aside negative
+> The three input functions take an `int` argument, but SDL keyboard inputs are stored as `SDL_KeyCode`s. When checking keyboard input, just typecast these keycodes to an `int`.
+
+### <b>Input Functions</b>
+
+### InputDown
+
+Checks if the queried input was pressed down on the <b><i>current</i></b> frame.
+
+<b>Returns:</b> bool
 
 <b>Arguments:</b>
 
-* `newName : std::string` - The new window title.
+* `input : int` - The input being queried. 
 
-### toggleFullscreen
+### InputUp
 
+Checks if the queried input was released on the <b><i>current</i></b> frame.
+
+<b>Returns:</b> bool
+
+<b>Arguments:</b>
+
+* `input : int` - The input being queried. 
+
+### InputHeld
+
+Returns true on <b><i>any</i></b> frame that the queried input is held down.
+
+<b>Returns:</b> bool
+
+<b>Arguments:</b>
+
+* `input : int` - The input being queried. 
+
+### MouseWindowPosition
+
+Returns the x,y pixel coordinates of the mouse within the window.
+
+<b>Returns:</b> Vector2Int
+
+### MousePosition
+
+Returns the position of the mouse in game. Does this by finding the mouse's position on the window, added to the origin of a camera.
+
+<b>Returns:</b> Vector2
+
+<b>Arguments:</b>
+
+* `cam : std::shared_ptr&lt;Camera&gt;` - The camera used to find the position in game. Leave as `nullptr` to automatically find a camera. 
+
+<b>Other Notes:</b>
+
+* If `cam` is `nullptr`, and no camera exists in the scene, the mouse's position on the window is returned.

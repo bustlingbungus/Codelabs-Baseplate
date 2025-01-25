@@ -682,6 +682,9 @@ The only thing the constructor needs to do is pass the name to the `Scene` base 
 
 The deconstructor will deallocate resources by simply calling `Destroy`.
 
+> aside positive
+> In Scene's constructor, a camera will be added to the scene by automatically, with scale (1, 1), zoom 1, and position (0, 0).
+
 ``` C++
 /* MyScene.cpp */
 #include "MyScene.hpp"
@@ -988,6 +991,8 @@ The camera's position is the x,y coordinates of centre of the viewport, in game 
 
 The scale is the region of the window the camera renders to. A camera with scale = (1,1) will render onto the entire window. If scale = (0.5, 0.5), it will only render onto one quarter of the winow. 
 
+When creating a new scene, a camer will be added to the scene by default, with scale (1, 1), zoom 1, and position (0, 0).
+
 > aside positive
 > The camera has a zoom - how big or small objects are rendered. Make zoom bigger to make the camera render everything larger, and smaller to make it render smaller. A zoom of `1.0` means that 1 pixel on the screen represents 1 unit in game. 
 
@@ -1031,3 +1036,182 @@ Sets the camera's rendering scale.
 <b>Returns:</b> void
 
 <b>Argument:</b> float
+
+## AudioPlayer
+
+Game object that plays an audio file. In the current version, audio may only be played from the beginning of the file.
+
+> aside negative
+> Audio may only be created by loading a .wav file!
+
+To create an AudioPlayer, you must load an `LAudio` shared pointer from file. Here is an example of how that is done:
+
+``` C++
+auto myAudio = std::make_shared<LAudio>();
+myAudio->loadFromFile("path/to/my/file.wav");
+```
+
+### constructor
+
+Assigns variables and, if specified, begins playing audio.
+
+<b>Arguments:</b>
+
+* `sound : std::shared_ptr<LAudio>` - The audio for the object to play.
+* `playOnStart : bool` - When `true`, the audio will begin playing on the frame of the object's creation. `false` by default.
+* `destroyOnEnd : bool` - When `true`, the AudioPlayer will remove itself from the scene when the audio finishes playing. `false` by default.
+
+<b>Other Notes:</b>
+
+* For sounds that will be played consistently within a scene, it is useful to leave `destroyOnEnd` as `false`, to save on time. For random once-off sound effects, it may be better to set both `playOnStart` and `destroyOnEnd` to `true`, and just instantiate the sound when needed, to save on memory.
+
+### Destroy
+
+Deallocates stored memory.
+
+<b>Returns:</b> void.
+
+### Play
+
+Begins playing the audio from beginning.
+
+<b>Returns:</b> void
+
+<b>Arguments:</b>
+
+* `channel : int` - The channel the audio should be played on. Leave as `-1` to choose a channel automatically. See [LAudio documentation](https://bustlingbungus.github.io/SDLBoilerplateDocumentation/#3) for more information.
+* `loops : int` - the number of times the audio will loop after the first play. Leave as `0` to play the audio once, set to `1` to have the audio play twice, and so on. Set this value to `-1` to have the audio loop indefinitely (until `Halt()` is called).
+
+<b>Other Notes:</b>
+
+* Sets `playing` tracker to `true`. `timeRemaining` is only updated when `playing` is `true`.
+* Audio may <i>only</i> be played from the beginning of the audio file.
+
+### Halt
+
+Stops the audio playing.
+
+<b>Returns:</b> void
+
+<b>Other Notes:</b>
+
+* Sets `playing` tracker to `false`. `timeRemaining` is only updated when `playing` is `true`.
+* Sets `timeRemaining` back to the entire duration of the stored audio.
+
+### Duration
+
+The amount of time (in seconds) of the entire audio.
+
+<b>Returns:</b> float
+
+### timeRemaining
+
+The amount of time (in seconds) until the audio finishes playing.
+
+<b>Returns:</b> float
+
+<b>Other Notes:</b>
+
+* Only updated when the audio is currently playing, otherwise `timeRemaining` is equal to `Duration`.
+
+### DestroyOnFinish
+
+Specify if the AudioPlayer should remove itself from the game when the audio finishes playing.
+
+<b>Returns:</b> void
+
+<b>Arguments:</b>
+
+* `destroy : bool` - Whether the object should be destroyed when audioo finishes playing.
+
+## Stock Object Components
+
+The following few pages are for object components included in the engine. You may add these components directly to an object for default behaviour, or make a subclass of them for more specialised behaviour.
+
+The included components are 
+
+* TextureRenderer
+* TextRenderer
+* AnimationRenderer
+* BoxCollider
+* RigidBody
+
+## Texture Renderer
+
+Stores a texture to be rendered onto all cameras. I.e., Each camera object in the scene will render a texture renderer onto the window. The position the texture is rendered is based on the position of the texture in game relative to the camera.
+
+> aside positive
+> For efficiency, if a texture renderer cannot be seen by a camera, it will not be rendered by the camera. 
+
+A texture renderer may be configured to not render relative to a camera (see constructor). These renderers will be rendered onto the window, with their parent object's position being used to determine where on the window, rather than their in game positios relative to a camera. This is reccomended for things like UI elements that are not intended to "exist" <i>in</i> the game.
+
+The texture renderer (as well as the animation renderer) requires the creation of an LTexture shared pointer. Here are some examples of how to do that:
+
+``` C++
+// loading an image from file
+auto tex1 = std::make_shared<LTexture>(gWindow);
+tex1->loadFromFile("path/to/your/file.png");
+
+// loading an image from text
+// it is reccomended to just use the `TextRenderer` component to do this automatically.
+auto tex2 = std::make_shared<LTexture>(gWindow);
+tex2->loadFromRenderedText("Hello World!", {red,green,blue,alpha}, myFont);
+
+// creating a solid colour
+auto tex3 = std::make_shared<LTexture>(gWindow);
+tex3->solidColour({red,green,blue,alpha}, width, height);
+```
+
+> aside negative
+> You may also use SDL methods to create textures in a more complicated manner; any way to get a valid LTexture shared pointer may be used. 
+
+The texture renderer will automatically track the position of its parent, and render the texture at the in game position of its parent object. The size of the rendered texture will also be the same as the scale of the parent object, regardless of the dimensions of the texture itself.
+
+### Public Members
+
+* `texture : std::shared_ptr<LTexture>`
+    * The texture that the renderer renders onto the window.
+    * May be changed freely to and from any texture pointer.
+    * When `texture` is `nullptr`, the texture simply doesn't render.
+
+* `rect : RectF`
+    * The in game position and dimensions of the texture.
+    * Updated automatically every frame.
+
+### constructor
+
+Assigns variables.
+
+<b>Arguments:</b>
+
+* `obj : std::shared_ptr<GameObject>` - Pointer to the renderer's parent object.
+* `texture : std::shared_ptr<LTexture>` - Pointer to the texture to render.
+* `z : int` - Rendering priority. Low z values will be rendered under objects with higher z values. `0` by default.
+* `renderRelative : bool` - Configure if the texture should be rendered relative to cameras (`true`), or if it should render in a constant position on the window (`false`). `true` by default.
+* `startEnabled : bool` - Whether the renderer should be enabled on creation. `true` by default.
+
+### Destroy
+
+Deallocates memory, including the texture.
+
+<b>Returns:</b> void
+
+<b>Other Notes:</b>
+
+* If you have the texture pointer stored somewhere <i>outside</i> the context of the texture renderer, the texture will not be deallocates in Destroy, and the texture pointer you have stored may still be used. 
+
+### Z
+
+Rendering priority of the texture renderer. Low z values will be rendered under objects with higher z values.
+
+<b>Returns:</b> int
+
+### SetZ
+
+Set rendering priority of the texture renderer. Low z values will be rendered under objects with higher z values.
+
+<b>Returns:</b> void
+
+<b>Arguments:</b>
+
+* `newZ : int` - New rendering priority
